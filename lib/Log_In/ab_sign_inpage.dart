@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_image_api/helper/round_btn.dart';
 import 'package:my_image_api/helper/utilis.dart';
 import '../helper/text_form field.dart';
+import 'package:uuid/uuid.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -18,6 +19,7 @@ class _SignInPageState extends State<SignInPage> {
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
   final conformpasscontroller = TextEditingController();
+  var uuid = Uuid();
 
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -104,6 +106,9 @@ class _SignInPageState extends State<SignInPage> {
                 if (_formkey.currentState!.validate()) {
                   SignUp();
                 }
+                String newUuid = uuid.v4();
+                print(newUuid);
+                Navigator.pop(context);
               },
             ),
             SizedBox(

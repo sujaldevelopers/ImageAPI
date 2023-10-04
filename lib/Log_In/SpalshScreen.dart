@@ -21,7 +21,7 @@ class _SplashscreenState extends State<Splashscreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:Center(
-        child: Text("3 Sec Error."),
+        child: Image.asset("asserts/image/images/20231003_174441_0000.png"),
       ),
     );
   }

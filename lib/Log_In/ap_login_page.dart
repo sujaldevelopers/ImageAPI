@@ -148,10 +148,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               ActionChip(
                 label: Text("Login With Phone No."),
-                avatar: CircleAvatar(
-                  foregroundImage:
-                      AssetImage("asserts/image/IMG_20230813_160147_125.jpg"),
-                ),
+                // avatar: CircleAvatar(
+                //   foregroundImage:
+                //       AssetImage("asserts/image/IMG_20230813_160147_125.jpg"),
+                // ),
                 onPressed: () {
                   Navigator.push(
                     context,

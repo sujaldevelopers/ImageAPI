@@ -9,7 +9,6 @@ import 'package:my_image_api/my_home_page.dart';
 import '../CRUD/add_firestore_post.dart';
 import '../CRUD/fire_store_list_screen.dart';
 import '../CRUD/image_pic.dart';
-import '../image/uplode_image.dart';
 
 class SplashService {
   void isLogin(BuildContext, context) {
@@ -19,10 +18,10 @@ class SplashService {
     if (user != null) {
       Timer(
         Duration(seconds: 3),
-        () => Navigator.push(
+        () => Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => AddFireStorePosts(),
+            builder: (context) => MyImage(),
           ),
         ),
       );

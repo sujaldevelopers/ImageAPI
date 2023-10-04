@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Log_In/SpalshScreen.dart';
-// -------------------------------
+
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.brown,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
-        //useMaterial3: true,
+        useMaterial3: true,
       ),
       home:  Splashscreen(),
     );

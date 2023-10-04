@@ -1,15 +1,18 @@
-import 'dart:io';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
-import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
+class mainpage extends StatefulWidget {
+  const mainpage({super.key});
 
-Future GetImage()async{
-  File?file;
-  final picker=ImagePicker();
-    final pickfile=await picker.pickImage(source: ImageSource.gallery,imageQuality: 70);
-    if(pickfile!=null){
-      file=File(pickfile.path);
-    }else{
-      debugPrint("No Image Selected");
-    }
+  @override
+  State<mainpage> createState() => _mainpageState();
+}
+
+class _mainpageState extends State<mainpage> {
+  final ref = FirebaseDatabase.instance.ref().child("users").once().then((value){DataSnapshot snapshot;});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
 }
