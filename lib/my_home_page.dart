@@ -1,15 +1,17 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_image_api/helper/utilis.dart';
+
 import 'package:my_image_api/profile/user_profile.dart';
 
 import 'CRUD/add_firestore_post.dart';
+import 'helper/bottom.dart';
 
 class MyImage extends StatefulWidget {
   const MyImage({super.key});
@@ -54,7 +56,7 @@ class _MyImageState extends State<MyImage> {
                           borderRadius: BorderRadius.circular(10),
                           child: FadeInImage.assetNetwork(
                             placeholder: 'asserts/image/images/avatar.png',
-                            image: snapshot.value['Pimage'],
+                            image: "${snapshot.value['Pimage']}",
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -64,16 +66,17 @@ class _MyImageState extends State<MyImage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          snapshot.value['PTitle'],
+                          snapshot.value['PTitle'].toString(),
+                          style: TextStyle(),
                         ),
                         IconButton(
                           onPressed: () {
-                            databaseref
-                                .child('user List')
-                                .child(snapshot.child('Pid').value.toString())
-                                .remove();
+                            PostService.deletePost('Pid', 'Puid');
                           },
-                          icon: Icon(CupertinoIcons.delete),
+                          icon: AvatarGlow(
+                            endRadius: 10,
+                            child: Icon(CupertinoIcons.delete),
+                          ),
                         ),
                       ],
                     ),
@@ -96,7 +99,13 @@ class _MyImageState extends State<MyImage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyImage(),
+                        ));
+                  },
                   icon: Icon(
                     Icons.home,
                     size: 30,
@@ -114,22 +123,49 @@ class _MyImageState extends State<MyImage> {
                     setState(() {});
                   },
                   icon: Icon(Icons.add, size: 30)),
-              IconButton(onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UserProfile(),
-                    ));
-              }, icon: Icon(Icons.person, size: 30)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProfile(),
+                        ));
+                  },
+                  icon: Icon(Icons.person, size: 30)),
             ],
           ),
         ),
       ),
     );
   }
-}
+} //data.bottom(context),
 
-/*// Future<void> showMyDialog(String title, String id) async {
+/*
+Container(
+        height: 60,
+        color: Colors.grey.shade100,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.home,
+                    size: 30,
+                  )),
+              IconButton(
+
+                  icon: Icon(Icons.add, size: 30)),
+              IconButton(
+
+                  icon: Icon(Icons.person, size: 30)),
+            ],
+          ),
+        ),
+      ),
+// Future<void> showMyDialog(String title, String id) async {
 //   editcontroller.text = title;
 //   return showDialog(
 //     context: context,

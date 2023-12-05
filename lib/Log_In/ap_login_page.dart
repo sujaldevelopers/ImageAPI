@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_image_api/Log_In/with_phone.dart';
+import 'package:my_image_api/helper/bottom.dart';
 
 import '../helper/round_btn.dart';
 import '../helper/utilis.dart';
@@ -21,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
-
+  final databaseref = FirebaseDatabase.instance.ref().child('user');
   final _auth = FirebaseAuth.instance;
 
   @override
@@ -36,15 +39,25 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => loding = true);
     _auth
         .signInWithEmailAndPassword(
-            email: emailcontroller.text,
-            password: passwordcontroller.text.toString())
+        email: emailcontroller.text,
+        password: passwordcontroller.text.toString())
         .then((value) {
       Utilis().toastMessage(value.user!.email.toString());
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyImage(),
-          ));
+      FirebaseAnimatedList(query: databaseref.child('user List'),
+          itemBuilder: (context, snapshot, animation, index)
+      {
+
+        if (snapshot.value['Puuid']==snapshot.value['Puuid']) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyImage(),));
+        } else {
+
+        }
+        return Container();
+      },);
+
       setState(() => loding = false);
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
@@ -164,6 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
+
       ),
     );
   }

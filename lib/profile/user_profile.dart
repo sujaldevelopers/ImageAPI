@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_image_api/Log_In/ap_login_page.dart';
 import 'package:my_image_api/helper/utilis.dart';
+import 'package:my_image_api/helper/bottom.dart';
 
+import '../CRUD/add_firestore_post.dart';
+import '../my_home_page.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -97,7 +101,6 @@ class _UserProfileState extends State<UserProfile> {
                 ),
                 alignment: Alignment.topLeft),
           ),
-          Spacer(),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Align(
@@ -118,14 +121,63 @@ class _UserProfileState extends State<UserProfile> {
                             Utilis().toastMessage(error.toString());
                           });
                         },
-                        child: Text("Log Out")),
-
+                        child: Text(
+                          "Log Out",
+                          style: TextStyle(fontSize: 20),
+                        )),
                   ],
                 ),
                 alignment: Alignment.topLeft),
           ),
         ],
       ),
+      // bottomNavigationBar: data.bottom(context),
+      bottomNavigationBar: Container(
+        height: 60,
+        color: Colors.grey.shade100,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyImage(),
+                        ));
+                  },
+                  icon: Icon(
+                    Icons.home,
+                    size: 30,
+                  )),
+              IconButton(
+                  onPressed: () async {
+                    final res = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddFireStorePosts(),
+                        ));
+
+                    print('res -> $res');
+
+                    setState(() {});
+                  },
+                  icon: Icon(Icons.add, size: 30)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProfile(),
+                        ));
+                  },
+                  icon: Icon(Icons.person, size: 30)),
+            ],
+          ),
+        ),
+      ), // data.bottom(context),
     );
   }
 }

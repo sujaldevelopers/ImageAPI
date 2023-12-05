@@ -1,9 +1,14 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_image_api/helper/round_btn.dart';
 import 'package:my_image_api/helper/utilis.dart';
-import '../helper/text_form field.dart';
+import '../add_post.dart';
 import 'package:uuid/uuid.dart';
 
 class SignInPage extends StatefulWidget {
@@ -20,6 +25,9 @@ class _SignInPageState extends State<SignInPage> {
   final passwordcontroller = TextEditingController();
   final conformpasscontroller = TextEditingController();
   var uuid = Uuid();
+  File? image;
+  final databaseref = FirebaseDatabase.instance.ref().child("user");
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -102,12 +110,38 @@ class _SignInPageState extends State<SignInPage> {
             ),
             RoundButton(
               text: "Sign Up",
-              onTap: () {
-                if (_formkey.currentState!.validate()) {
-                  SignUp();
+              onTap: () async {
+                try {
+                  if (_formkey.currentState!.validate()) {
+                    SignUp();
+                  }
+                  Navigator.pop(context);
+                  int date = DateTime.now().microsecondsSinceEpoch;
+                  firebase_storage.Reference ref = firebase_storage
+                      .FirebaseStorage.instance
+                      .ref('/poast$date');
+                  setState(() {
+                    loding = true;
+                  });
+                  databaseref.child('user List').child(date.toString()).set({
+                    'Puuid': uuid.v4(),
+                  }).then((value) {
+                    Utilis().toastMessage('Post Published');
+                    setState(() {
+                      loding = false;
+                    });
+                  }).onError((error, stackTrace) {
+                    Utilis().toastMessage(error.toString());
+                    setState(() {
+                      loding = false;
+                    });
+                  });
+                } catch (e) {
+                  Utilis().toastMessage(e.toString());
+                  setState(() {
+                    loding = false;
+                  });
                 }
-                String newUuid = uuid.v4();
-                print(newUuid);
                 Navigator.pop(context);
               },
             ),

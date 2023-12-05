@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,11 @@ import 'package:my_image_api/helper/round_btn.dart';
 import 'package:my_image_api/helper/utilis.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:my_image_api/helper/bottom.dart';
+import 'package:my_image_api/my_home_page.dart';
+import 'package:slide_to_act/slide_to_act.dart';
+
+import '../profile/user_profile.dart';
 
 class AddFireStorePosts extends StatefulWidget {
   const AddFireStorePosts({super.key});
@@ -27,7 +33,15 @@ class _AddFireStorePostsState extends State<AddFireStorePosts> {
       firebase_storage.FirebaseStorage.instance;
   bool loding = false;
   final picker = ImagePicker();
-
+  final CollectionReference postCollection =
+  FirebaseFirestore.instance.collection('posts');
+  Future<void> addPost(String uid, String title, String content) async {
+    await postCollection.add({
+      'uid': uid,
+      'title': title,
+      'content': content,
+    });
+  }
   Future getImageGallery() async {
     final pickfile =
         await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
@@ -39,6 +53,7 @@ class _AddFireStorePostsState extends State<AddFireStorePosts> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,13 +85,13 @@ class _AddFireStorePostsState extends State<AddFireStorePosts> {
                               borderRadius: BorderRadius.circular(10)),
                           child: image != null
                               ? ClipRRect(
-                            borderRadius: BorderRadius.circular(9),
-                                child: Image.file(
+                                  borderRadius: BorderRadius.circular(9),
+                                  child: Image.file(
                                     image!.absolute,
                                     fit: BoxFit.fill,
                                   ),
-                              )
-                              : Icon(Icons.image,size: 100),
+                                )
+                              : Icon(Icons.image, size: 100),
                         ),
                       ),
                     ),
@@ -110,13 +125,20 @@ class _AddFireStorePostsState extends State<AddFireStorePosts> {
                 ),
               ),
             ),
-            SizedBox(height: 40,),
+            SizedBox(
+              height: 40,
+            ),
             Padding(
               padding: const EdgeInsets.all(10),
-              child: RoundButton(
-                text: "update",
-                IsLoding: loding,
-                onTap: () async {
+              child: SlideAction(
+                height: 65,
+                text: "Put Post",
+                borderRadius: 12,
+                elevation: 0,
+                innerColor: Colors.white,
+                outerColor: Colors.black38,
+                sliderButtonIcon: Icon(Icons.lock_open),
+                onSubmit: () async {
                   try {
                     int date = DateTime.now().microsecondsSinceEpoch;
                     firebase_storage.Reference ref = firebase_storage
@@ -130,12 +152,10 @@ class _AddFireStorePostsState extends State<AddFireStorePosts> {
                     var newUrl = await ref.getDownloadURL();
                     final User? user = auth.currentUser;
                     databaseref.child('user List').child(date.toString()).set({
-                      'Puuid':"",
                       'Pid': date.toString(),
                       'Pimage': newUrl.toString(),
-                      'Ptime': date.toString(),
                       'PTitle': postcontroller.text.toString(),
-                      'Pdisc':descriptcontroller.text.toString(),
+                      'Pdisc': descriptcontroller.text.toString(),
                       'Puid': user!.uid.toString(),
                     }).then((value) {
                       Utilis().toastMessage('Post Published');
@@ -161,6 +181,52 @@ class _AddFireStorePostsState extends State<AddFireStorePosts> {
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+        height: 60,
+        color: Colors.grey.shade100,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyImage(),
+                        ));
+                  },
+                  icon: Icon(
+                    Icons.home,
+                    size: 30,
+                  )),
+              IconButton(
+                  onPressed: () async {
+                    final res = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddFireStorePosts(),
+                        ));
+
+                    print('res -> $res');
+
+                    setState(() {});
+                  },
+                  icon: Icon(Icons.add, size: 30)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProfile(),
+                        ));
+                  },
+                  icon: Icon(Icons.person, size: 30)),
+            ],
+          ),
+        ),
+      ), //data.bottom(context),
     );
   }
 }
